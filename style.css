@@ -1,0 +1,18 @@
+body {
+    background-color: rgb(202, 207, 239);
+    text-align: center;
+}
+button {
+    background-color: beige;
+    border-radius: 15px;
+    height: 35px;
+    margin-right: 50px;
+    margin-left: 50px;
+}
+
+#bar {
+    background-color: grey;
+    padding: 5px;
+    margin: -10px;
+    text-align: center;
+}
