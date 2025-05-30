@@ -1,20 +1,33 @@
-const { defaultConfiguration } = require("express/lib/application");
 
+const { contentType } = require("express/lib/response");
 
-var HTML = document.getElementById("myFrame");
+var cards = [
+    {
+        suit:"Spades",
+        value:4
+    },
+    {
+        suit:"Hearts",
+        value:7
+    },
+    {
+        suit:"Diamonds",
+        value:9
+    },
+    
+];
 
-var doSomething = function(event, data){
-    console.log(event);
-    console.log(data);
-    alert("Frame me up before you go go");
+var TEMP = document.getElementById("temp");
+var TARGET = document.getElementById("target");
+
+var CARD = TEMP.querySelector(".card");
+
+for(var i = 0; i < cards.length; i++){
+    var currCard = cards[i];
+    var cardCopy = CARD.cloneNode(true);
+    cardCopy.style.backgroundPositionX = (-100 * currCard.value) + "%";
+    cardCopy.innerHTML = currCard.value;
+    cardCopy.innerHTML += "-" + currCard.suit;
+
+    TARGET.append(cardCopy);
 }
-
-for(var i = 0; i < frames.length; i ++){
-    var d = FRAMES[count];
-    var copy = HTML.cloneNode(true);
-    copy.addEventListener("click", (e)=>{doSomething(e,d)});
-
-    document.body.append(copy);
-}
-
-alert("PLEASE WORK!!!!");
