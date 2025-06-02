@@ -22,5 +22,6 @@ button {
     width: 10rem;
     background-image: url(Atlasnye_playing_cards_deck.svg);
     background-size:1300% 400%;
-    background-position-x:-100%;
+    background-position-x:0%;
+    background-position-Y:0%;
 }
