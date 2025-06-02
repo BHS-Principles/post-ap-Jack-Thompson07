@@ -1,6 +1,4 @@
 
-const { contentType } = require("express/lib/response");
-
 var cards = [
     {
         suit:"Spades",
@@ -36,6 +34,13 @@ var cards = [
     }
 ];
 
+var getSuitNumber = function(suit){
+    if(suit == "Hearts") return 0;
+    if(suit == "Diamonds") return 1;
+    if(suit == "Clubs") return 2;
+    return 3;
+};
+
 var TEMP = document.getElementById("temp");
 var TARGET = document.getElementById("target");
 
@@ -46,7 +51,7 @@ for(var i = 0; i < cards.length; i++){
     var cardCopy = CARD.cloneNode(true);
 
     cardCopy.style.backgroundPositionX = (100/12 * (currCard.value-1)) + "%";
-    cardCopy.style.backgroundPositionY = (-100/3 * getSuitNumber(currCard.suit)) + "%";
+    cardCopy.style.backgroundPositionY = (100/3 * getSuitNumber(currCard.suit)) + "%";
     
     cardCopy.innerHTML = currCard.value;
     cardCopy.innerHTML += "-" + currCard.suit;
@@ -55,9 +60,3 @@ for(var i = 0; i < cards.length; i++){
 }
 
 
-var getSuitNumber = function(suit){
-    if(suit == "Hearts") return 0;
-    if(suit == "Diamonds") return 1;
-    if(suit == "Clubs") return 2;
-    return 3;
-}
