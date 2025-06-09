@@ -2,29 +2,99 @@ var TEMP = document.getElementById("temp");
 var TARGET = document.getElementById("target");
 var CARD = TEMP.querySelector(".card");
 
-class Game{
+class CardGame{
     constructor(){
         this.players = [];
         this.deck = new Deck(52);
         this.discard = new Deck(0);
         this.turn = 1;
+        this.currentPlayer = 0;
     }
 
+    //starts the game by shuffleing the deck and dealing cards
     start(){
         deck.shuffle();
-        this.deal();
     }
 
+    //adds a new player to the game
     addPlayer(player){
         this.players.push(player);
     }
 
-    deal(){
-        for(i = 0; i < 7; i ++){
+    //Deals out num cards to all players in the game
+    deal(num){
+        for(var i = 0; i < num; i ++){
             for(j = 0; j < this.players.length; i ++){
                 this.players[j].recieveCard(this.deck.deal());
             }
         }
+    }
+
+    getCurrentPlayer(){
+        return this.players[this.currentPlayer];
+    }
+
+    newCard(){
+        return this.deck.deal();
+    }
+
+    nextTurn(){
+        currentPlayer ++;
+        if(currentPlayer > this.players.length() - 1){
+            this.currentPlayer = 0;
+            this.turn ++;
+        }
+    }
+
+    getPlayers(){
+        return this.players;
+    }
+}
+
+class Uno extends CardGame{
+    constructor(){
+        super();
+        super.deal(7);
+        this.currentCard = super.newCard;
+    }
+
+    play(){
+        while(!(gameOver())){
+            if(canPlayCard()){
+                while(!(this.canPlayCard(super.currentPlayer.playCard())));
+            }
+            else{
+                super.getCurrentPlayer.recieveCard(this.deck.deal());
+            }
+        }
+    }
+
+    canPlayCard(){
+        var hand = super.getCurrentPlayer().getHand();
+        for(var i = 0; i < hand.length; i ++){
+            if((hand[i].getSuit == this.currentCard.getSuit()) || 
+                (hand[i].getValue == this.currentCard.getValue()) ||
+                hand[i].getValue > 10){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    canPlayCard(card){
+        var hand = super.getCurrentPlayer().getHand();
+        return ((hand[i].getSuit == this.currentCard.getSuit()) || 
+                (hand[i].getValue == this.currentCard.getValue()) ||
+                 hand[i].getValue > 10);
+    }
+
+    gameOver(){
+        var players = super.getPlayers();
+        for(var i = 0; i < players.length; i ++){
+            if(players[i].getHand().length == 0)
+                return true;
+        }
+        return false;
     }
 }
 
@@ -32,10 +102,20 @@ class Player{
     constructor(name){
         this.hand = [];
         this.wins = 0;
+        this.name = name;
     }
 
+    //player adds the given card to their hand
     recieveCard(card){
         this.hand.push(card);
+    }
+
+    getHand(){
+        return this.hand;
+    }
+
+    playCard(){
+        returnHang(0)
     }
 }
 
@@ -48,17 +128,22 @@ class Card{
         this.suits = ["H","D","C","S"];
     }
 
+    //gets the suit index number
     getSuitNumber(){
         return this.suit;
     }
 
+    //gets the actual character of the suit
     getSuit(){
         return this.suits[this.suit];
     }
+
+    //gets the value of the card (1-13. 11 - Jack. 12 - Queen. 13 - King)
     getValue(){
         return this.value;
     }
 
+    //displays the card on the screen
     draw(){
         var cardCopy = CARD.cloneNode(true);
 
@@ -78,6 +163,7 @@ class Deck{
         this.make(size)
     }
 
+    //makes a list of cards (The deck) with the size as how many cards
     make(howMany){
         for(var i = 0; i < howMany; i ++){
             var card = new Card(i);
@@ -85,6 +171,7 @@ class Deck{
         }
     }
 
+    //suffles the deck by randomly interchanging cards in the deck
     shuffle(){
         for(var i = 0; i < this.cards.length; i ++){
             var rnd = Math.floor(Math.random()*this.cards.length);
@@ -94,13 +181,22 @@ class Deck{
         }
     }
 
+    //returns the card at the specified index
     getCardAt(index){
         return this.cards[index];
     }
 
+    //takes the top card from the deck, removes it, then returns it and displays it
     deal(){
         var card = this.cards[0];
         this.cards.remove(0);
+        card.draw();
        return card;
     }
 }
+
+var game = new Uno();
+var Jack = new Player(Jack);
+
+game.addPlayer(Jack);
+game.play();
