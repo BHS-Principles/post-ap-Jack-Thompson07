@@ -2,18 +2,21 @@ var TEMP = document.getElementById("temp");
 var TARGET = document.getElementById("target");
 var CARD = TEMP.querySelector(".card");
 
-class CardGame{
+class Game{
     constructor(){
         this.players = [];
         this.deck = new Deck(52);
         this.discard = new Deck(0);
-        this.turn = 1;
+        this.turn = 1;e
         this.currentPlayer = 0;
+        this.currentCard = null;
     }
 
     //starts the game by shuffleing the deck and dealing cards
     start(){
         deck.shuffle();
+        this.deal();
+        this.currentCard = newCard();
     }
 
     //adds a new player to the game
@@ -25,7 +28,7 @@ class CardGame{
     deal(num){
         for(var i = 0; i < num; i ++){
             for(j = 0; j < this.players.length; i ++){
-                this.players[j].recieveCard(this.deck.deal());
+                recieveCard(this.deck.deal(this.players[j]));
             }
         }
     }
@@ -49,28 +52,20 @@ class CardGame{
     getPlayers(){
         return this.players;
     }
-}
-
-class Uno extends CardGame{
-    constructor(){
-        super();
-        super.deal(7);
-        this.currentCard = super.newCard;
-    }
 
     play(){
         while(!(gameOver())){
             if(canPlayCard()){
-                while(!(this.canPlayCard(super.currentPlayer.playCard())));
+                while(!(this.canPlayCard(this.currentPlayer.playCard())));
             }
             else{
-                super.getCurrentPlayer.recieveCard(this.deck.deal());
+                this.currentPlayer.recieveCard(this.deck.deal());
             }
         }
     }
 
     canPlayCard(){
-        var hand = super.getCurrentPlayer().getHand();
+        var hand = this.currentPlayer.getHand();
         for(var i = 0; i < hand.length; i ++){
             if((hand[i].getSuit == this.currentCard.getSuit()) || 
                 (hand[i].getValue == this.currentCard.getValue()) ||
@@ -82,16 +77,15 @@ class Uno extends CardGame{
     }
 
     canPlayCard(card){
-        var hand = super.getCurrentPlayer().getHand();
+        var hand = this.currentPlayer.getHand();
         return ((hand[i].getSuit == this.currentCard.getSuit()) || 
                 (hand[i].getValue == this.currentCard.getValue()) ||
                  hand[i].getValue > 10);
     }
 
     gameOver(){
-        var players = super.getPlayers();
-        for(var i = 0; i < players.length; i ++){
-            if(players[i].getHand().length == 0)
+        for(var i = 0; i < this.players.length; i ++){
+            if(this.players[i].getHand().length == 0)
                 return true;
         }
         return false;
@@ -187,16 +181,19 @@ class Deck{
     }
 
     //takes the top card from the deck, removes it, then returns it and displays it
-    deal(){
+    deal(player){
         var card = this.cards[0];
         this.cards.remove(0);
         card.draw();
-       return card;
+        player.recieveCard(card);
     }
 }
 
 var game = new Uno();
 var Jack = new Player(Jack);
+
+var card = new Card(1);
+card.draw();
 
 game.addPlayer(Jack);
 game.play();
