@@ -23,7 +23,7 @@ class Game{
 
     start(){
         this.deck.shuffle();
-        this.deal(1);
+        this.deal(3);
         this.currentCard = this.deck.deal();
         this.play();
     }
@@ -230,6 +230,7 @@ class Player{
     //player adds the given card to their hand
     recieveCard(card){
         this.hand.push(card);
+        card.draw();
     }
 
     getHand(){
@@ -339,7 +340,6 @@ class Deck{
     deal(){
         var card = this.cards[0];
         this.cards.splice(0,1);
-        card.draw();
         return card;
     }
 
