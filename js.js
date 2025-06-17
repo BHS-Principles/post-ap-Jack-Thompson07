@@ -7,16 +7,112 @@ class Game{
         this.players = [];
         this.deck = new Deck(52);
         this.discard = new Deck(0);
-        this.turn = 1;e
+        this.turn = 1;
         this.currentPlayer = 0;
         this.currentCard = null;
     }
 
+    //adds a new player to the game
+    addPlayer(player){
+        this.players.push(player);
+    }
+
+    getCurrentPlayer(){
+        return this.players[this.currentPlayer];
+    }
+
+    start(){
+        this.deck.shuffle();
+        this.deal(1);
+        this.currentCard = this.deck.deal();
+        this.play();
+    }
+
+    //Deals out num cards to all players in the game
+    deal(num){
+        for(var i = 0; i < num; i ++){
+            for(var j = 0; j < this.players.length; j ++){
+                this.players[j].recieveCard(this.deck.deal());
+            }
+        }
+    }
+
+    nextTurn(){
+        this.currentPlayer ++;
+        if(this.currentPlayer > this.players.length - 1){
+            this.currentPlayer = 0;
+            this.turn ++;
+        }
+    }
+
+    play(){
+        while(!(this.gameOver())){
+            this.doTurn();
+            this.nextTurn();
+        }
+
+        var winner = this.checkWinner();
+        winner.displayHand();
+        alert("WINNER: " + winner.getName());
+    }
+
+    checkWinner(){
+        for(var i = 0; i < this.players.length; i ++){
+            if(this.players[i].getHand().length == 0){
+                return this.players[i];
+            }
+        }
+        
+    }
+
+    doTurn(){
+        alert("CURRENT CARD \n Value:" + this.currentCard.getValue() + " Suit:" + this.currentCard.getSuit());
+        var playedCard = this.getCurrentPlayer().playCard();
+        if(this.canPlayCard(playedCard)){
+            this.discard.addCard(this.currentCard);
+            this.currentCard = playedCard;
+            this.getCurrentPlayer().play(playedCard);
+            alert("YOU PLAYED: Value:" + playedCard.getValue() + " Suit:" + playedCard.getSuit());
+        }
+        else{
+            var drawCard = this.deck.deal()
+            this.getCurrentPlayer().recieveCard(drawCard);
+            alert("YOU CANNOT PLAY THAT CARD\nYOU REVIECED: Value:" + drawCard.getValue() + " Suit:" + drawCard.getSuit());
+        }
+
+    }
+
+    canPlayCard(playedCard){
+        return ((playedCard.getSuit() == this.currentCard.getSuit()) || 
+                (playedCard.getValue() == this.currentCard.getValue()) ||
+                (playedCard.getValue() > 10));
+    }
+
+    gameOver(){
+        for(var i = 0; i < this.players.length; i ++){
+            if(this.players[i].getHand().length == 0)
+                return true;
+        }
+        return false;
+    }
+}
+
+class BasicGame{
+    constructor(){
+        this.players = [];
+        this.deck = new Deck(52);
+        this.discard = new Deck(0);
+        this.turn = 1;
+        this.currentPlayer = 0;
+    }
+
+
     //starts the game by shuffleing the deck and dealing cards
     start(){
-        deck.shuffle();
-        this.deal();
-        this.currentCard = newCard();
+        this.deck.shuffle();
+        //this.deal();
+        //this.currentCard = newCard();
+        this.play();
     }
 
     //adds a new player to the game
@@ -42,8 +138,8 @@ class Game{
     }
 
     nextTurn(){
-        currentPlayer ++;
-        if(currentPlayer > this.players.length() - 1){
+        this.currentPlayer ++;
+        if(this.currentPlayer > this.players.length - 1){
             this.currentPlayer = 0;
             this.turn ++;
         }
@@ -54,16 +150,47 @@ class Game{
     }
 
     play(){
-        while(!(gameOver())){
-            if(canPlayCard()){
-                while(!(this.canPlayCard(this.currentPlayer.playCard())));
-            }
-            else{
-                this.currentPlayer.recieveCard(this.deck.deal());
-            }
+        while(!(this.gameOver())){
+            this.doTurn();
+            this.nextTurn();
         }
+
+        var winner = this.checkWinner();
+        winner.displayHand();
+        alert("WINNER: " + winner.getName());
     }
 
+    gameOver(){
+        if(this.turn > 1)
+            return true;
+        return false;
+    }
+
+    checkWinner(){
+        var winner = this.players[0]
+        for(var i = 1; i < this.players.length; i ++){
+            if(winner.getHand()[0].getValue() < this.players[i].getHand()[0].getValue()){
+                winner = this.players[i];
+            }
+        }
+        return winner;
+    }
+
+    doTurn(){
+        
+        this.deck.deal(this.players[this.currentPlayer]);
+    }
+
+    /*
+    doTurn(){
+        if(canPlayCard()){
+            while(!(this.canPlayCard(this.currentPlayer.playCard())));
+        }
+        else{
+            this.currentPlayer.recieveCard(this.deck.deal());
+        }
+    }
+    
     canPlayCard(){
         var hand = this.currentPlayer.getHand();
         for(var i = 0; i < hand.length; i ++){
@@ -90,6 +217,7 @@ class Game{
         }
         return false;
     }
+    */
 }
 
 class Player{
@@ -109,7 +237,30 @@ class Player{
     }
 
     playCard(){
-        returnHang(0)
+        var text = this.name + "'s HAND\nWHAT CARD WOULD YOU LIKE TO PLAY\n";
+        for(var i = 0; i < this.hand.length; i ++){
+            text += (i + 1) + ") Value:" + this.hand[i].getValue() + " Suit:" + this.hand[i].getSuit() +"\n";
+        }
+        var input = prompt(text);
+        return this.hand[parseInt(input) -1];
+    }
+
+    getName(){
+        return this.name;
+    }
+
+    displayHand(){
+        for(var i = 0; i < this.hand.length; i ++){
+            this.hand[i].draw();
+        }
+    }
+
+    play(card){
+        for(var i = 0; i < this.hand.length; i ++){
+            if(this.hand[i] == card){
+                this.hand.splice(i,1);
+            }
+        }
     }
 }
 
@@ -119,7 +270,7 @@ class Card{
         this.suit = Math.floor(num/13);
         this.value = (num % 13) + 1;
         this.background = "bla.svg";
-        this.suits = ["H","D","C","S"];
+        this.suits = ["Hearts","Diamonds","Clubs","Spades"];
     }
 
     //gets the suit index number
@@ -165,6 +316,10 @@ class Deck{
         }
     }
 
+    addCard(card){
+        this.cards.push(card);
+    }
+
     //suffles the deck by randomly interchanging cards in the deck
     shuffle(){
         for(var i = 0; i < this.cards.length; i ++){
@@ -181,19 +336,16 @@ class Deck{
     }
 
     //takes the top card from the deck, removes it, then returns it and displays it
-    deal(player){
+    deal(){
         var card = this.cards[0];
-        this.cards.remove(0);
+        this.cards.splice(0,1);
         card.draw();
-        player.recieveCard(card);
+        return card;
     }
+
 }
 
-var game = new Uno();
-var Jack = new Player(Jack);
-
-var card = new Card(1);
-card.draw();
-
-game.addPlayer(Jack);
-game.play();
+var game = new Game();
+game.addPlayer(new Player("Player 1"));
+game.addPlayer(new Player("Player 2"));
+game.start();

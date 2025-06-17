@@ -16,7 +16,10 @@ button {
     margin: -10px;
     text-align: center;
 }
-
+#temp {
+    border:10px solid;
+    display:none;
+}
 .card{
     height:15rem;
     width: 10rem;
